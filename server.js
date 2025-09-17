@@ -3,7 +3,7 @@ const path = require('path');
 
 // Import routes
 const aboutUsRoute = require('./routes/aboutUsRoute');
-const gettingRoute = require('./routes/gettingRoute');
+const greetingRoute = require('./routes/greetingRoute');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/aboutus', aboutUsRoute);
-app.use('/getting', gettingRoute);
+app.use('/greeting', greetingRoute);
 
 // Start server
 app.listen(PORT, () => {
