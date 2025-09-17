@@ -12,9 +12,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files (jika ada)
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Routes
 app.use('/aboutus', aboutUsRoute);
 app.use('/getting', gettingRoute);
