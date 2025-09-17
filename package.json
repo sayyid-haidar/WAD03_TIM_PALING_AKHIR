@@ -1,0 +1,15 @@
+{
+  "name": "wad03_tim_paling_akhir",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node server.js"
+  },
+  "author": "sayyid",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
