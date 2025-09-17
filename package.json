@@ -11,5 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0"
-  }
+  },
+  "anggota": [
+    {"name": "Sandi Setiawan", "id": "24120400016"},
+    {"name": "Muhammad Fikri Ramadhan", "id": "21083010014"},
+    {"name": "Muhammad Rafli Ramadhan", "id": "21083010015"}
+  ]
 }
+
