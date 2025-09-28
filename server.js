@@ -4,6 +4,8 @@ const path = require('path');
 // Import routes
 const aboutUsRoute = require('./routes/aboutUsRoute');
 const greetingRoute = require('./routes/greetingRoute');
+const usersRoute = require('./routes/usersRouting');
+  
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/aboutus', aboutUsRoute);
 app.use('/greeting', greetingRoute);
+app.use('/user', usersRoute);
 
 // Start server
 app.listen(PORT, () => {
