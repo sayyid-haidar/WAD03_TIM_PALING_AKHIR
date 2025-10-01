@@ -3,7 +3,7 @@ const path = require('path');
 
 exports.getAnggotaByName = (req, res) => {
 	const nameParam = req.params.name.toLowerCase().replace(/\s/g, '');
-	const packageJsonPath = path.join(__dirname, '../package.json');
+	const packageJsonPath = path.join(__dirname, '../../package.json');
 	const packageData = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 	const anggota = packageData['anggota'] || [];
 	const filtered = anggota.filter(a =>
