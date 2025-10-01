@@ -1,19 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const greetingController = require('../controllers/greetingController');
 
-// GET /getting - API information
-router.get("/", (req, res) => {
-  res.json({ message: "Selamat datang di API kami!" });
-});
+router.get("/", greetingController.getWelcome);
 
-// GET /greeting?name=Nama
-router.get("/greeting", (req, res) => {
-  const name = req.query.name;
-  if (name) {
-    res.json({ message: `hello ${name}` });
-  } else {
-    res.json({ message: "hello" });
-  }
-});
+router.get("/greeting", greetingController.getGreeting);
 
 module.exports = router;
