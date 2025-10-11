@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-const routes = require('./src/routes');
+const usersRouter = require('./src/routes/usersRouting');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', routes);
+// Langsung daftarkan router users di sini
+app.use('/users', usersRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

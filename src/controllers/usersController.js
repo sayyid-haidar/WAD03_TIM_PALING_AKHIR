@@ -1,10 +1,7 @@
-let users = [
-    { username: 'alicece', name: 'Alice', email: 'alice@gmail.com', role: 'buyer' },
-    { username: 'aloyloy', name: 'aloy', email: 'aloy@gmail.com', role: 'seller' },
-    { username: 'sandrasan', name: 'sandra', email: 'sandra@gmail.com', role: 'seller' },
-];
+const usersService = require('../services/usersService');
 
 exports.getAllUsers = (req, res) => {
+    const users = usersService.getAllUsers();
     res.json(users);
 };
 
@@ -13,31 +10,28 @@ exports.createUser = (req, res) => {
     if (!username || !name || !email || !role) {
         return res.status(400).json({ message: 'Semua field harus diisi' });
     }
-    const usernameLower = username.toLowerCase();
-    const exists = users.some(u => u.username === usernameLower);
-    if (exists) {
-        return res.status(409).json({ message: 'Username sudah digunakan' });
+    try {
+        const newUser = usersService.createUser({ username, name, email, role });
+        res.status(201).json(newUser);
+    } catch (err) {
+        res.status(409).json({ message: err.message });
     }
-    const newUser = { username: usernameLower, name, email, role };
-    users.push(newUser);
-    res.status(201).json(newUser);
 };
 
 exports.updateUser = (req, res) => {
-    const usernameParam = req.params.username.toLowerCase();
+    const usernameParam = req.params.username;
     const { username, name, email, role } = req.body;
     if (!username || !name || !email || !role) {
         return res.status(400).json({ message: 'Semua field harus diisi' });
     }
-    const usernameLower = username.toLowerCase();
-    const exists = users.some(u => u.username === usernameLower && u.username !== usernameParam);
-    if (exists) {
-        return res.status(409).json({ message: 'Username sudah digunakan' });
+    try {
+        const updatedUser = usersService.updateUser(usernameParam, { username, name, email, role });
+        res.json(updatedUser);
+    } catch (err) {
+        if (err.message === 'User tidak ditemukan') {
+            res.status(404).json({ message: err.message });
+        } else {
+            res.status(409).json({ message: err.message });
+        }
     }
-    const userIdx = users.findIndex(u => u.username === usernameParam);
-    if (userIdx === -1) {
-        return res.status(404).json({ message: 'User tidak ditemukan' });
-    }
-    users[userIdx] = { username: usernameLower, name, email, role };
-    res.json(users[userIdx]);
 };
