@@ -4,29 +4,30 @@ function getAllUsers() {
     return usersRepo.getAll();
 }
 
-function createUser({ username, name, email, role }) {
-    const users = usersRepo.getAll();
+async function createUser({ username, name, email, role }) {
     const usernameLower = username.toLowerCase();
-    if (users.some(u => u.username === usernameLower)) {
+    const existingUser = await usersRepo.findByUsername(usernameLower);
+    if (existingUser) {
         throw new Error('Username sudah digunakan');
     }
-    const newUser = { username: usernameLower, name, email, role };
-    users.push(newUser);
-    usersRepo.saveAll(users);
-    return newUser;
+    return usersRepo.create({ username: usernameLower, name, email, role });
 }
 
-function updateUser(usernameParam, { username, name, email, role }) {
-    const users = usersRepo.getAll();
-    const usernameLower = username.toLowerCase();
-    const idx = users.findIndex(u => u.username === usernameParam.toLowerCase());
-    if (idx === -1) throw new Error('User tidak ditemukan');
-    if (users.some(u => u.username === usernameLower && u.username !== usernameParam.toLowerCase())) {
-        throw new Error('Username sudah digunakan');
+async function updateUser(usernameParam, { username, name, email, role }) {
+    const targetUser = await usersRepo.findByUsername(usernameParam.toLowerCase());
+    if (!targetUser) {
+        throw new Error('User tidak ditemukan');
     }
-    users[idx] = { username: usernameLower, name, email, role };
-    usersRepo.saveAll(users);
-    return users[idx];
+
+    const usernameLower = username.toLowerCase();
+    if (usernameLower !== usernameParam.toLowerCase()) {
+        const existingUser = await usersRepo.findByUsername(usernameLower);
+        if (existingUser) {
+            throw new Error('Username sudah digunakan');
+        }
+    }
+
+    return usersRepo.update(usernameParam.toLowerCase(), { username: usernameLower, name, email, role });
 }
 
 module.exports = { getAllUsers, createUser, updateUser };
