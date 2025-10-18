@@ -86,32 +86,3 @@ jspm_packages/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Abaikan folder dependensi Node.js (SANGAT PENTING)
-node_modules/
-
-# Abaikan file dan folder yang tidak ingin di-submit
-# (selain users, middleware, database.js, dan server.js)
-
-# Abaikan folder data lama jika masih ada
-data/
-
-# Abaikan file-file di controllers
-src/controllers/aboutUsController.js
-src/controllers/greetingController.js
-src/controllers/productsController.js
-src/controllers/cartController.js
-
-# Abaikan file-file di repositories
-src/repositories/productsRepository.js
-src/repositories/cartRepository.js
-
-# Abaikan file-file di routes
-src/routes/aboutUsRoute.js
-src/routes/greetingRoute.js
-src/routes/productsRoute.js
-src/routes/cartRoute.js
-
-# Abaikan file-file di services
-src/services/productsService.js
-src/services/cartService.js
