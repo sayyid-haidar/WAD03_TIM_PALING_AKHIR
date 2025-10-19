@@ -10,9 +10,12 @@
   "author": "sayyid",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
   },
-  "anggota":  [
+  "anggota": [
     {
       "name": "Sandi Setiawan",
       "nim": "24120400016"
