@@ -1,29 +1,39 @@
-const db = require('../../database');
+const db = require('../../database'); // Sekarang ini adalah object Sequelize
 
 async function getAll() {
-    const { rows } = await db.query('SELECT id, username, name, email, role FROM users');
-    return rows;
+    // Menggunakan metode findAll() dari Sequelize
+    const users = await db.users.findAll();
+    return users;
 }
 
 async function findByUsername(username) {
-    const { rows } = await db.query('SELECT * FROM users WHERE username = $1', [username]);
-    return rows[0];
+    // Menggunakan metode findOne() dari Sequelize
+    const user = await db.users.findOne({ where: { username: username } });
+    return user;
 }
 
 async function create({ username, name, email, role }) {
-    const { rows } = await db.query(
-        'INSERT INTO users (username, name, email, role) VALUES ($1, $2, $3, $4) RETURNING *',
-        [username, name, email, role]
-    );
-    return rows[0];
+    // Menggunakan metode create() dari Sequelize
+    const newUser = await db.users.create({ username, name, email, role });
+    return newUser;
 }
 
 async function update(usernameParam, { username, name, email, role }) {
-    const { rows } = await db.query(
-        'UPDATE users SET username = $1, name = $2, email = $3, role = $4 WHERE username = $5 RETURNING *',
-        [username, name, email, role, usernameParam]
-    );
-    return rows[0];
+    // 1. Cari user yang akan diupdate
+    const userToUpdate = await db.users.findOne({ where: { username: usernameParam } });
+
+    // 2. Jika ditemukan, update nilainya
+    if (userToUpdate) {
+        userToUpdate.username = username;
+        userToUpdate.name = name;
+        userToUpdate.email = email;
+        userToUpdate.role = role;
+        
+        // 3. Simpan perubahan ke database
+        await userToUpdate.save();
+        return userToUpdate;
+    }
+    return null; // Kembalikan null jika user tidak ditemukan
 }
 
 module.exports = {
