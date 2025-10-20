@@ -1,44 +1,122 @@
-const usersController = require('./usersController');
 const productsService = require('../services/productsService');
 
-exports.createProduct = async (req, res) => {
+exports.getAllProducts = async (req, res) => {
     try {
-        const { product_name, product_category, price, owner } = req.body;
-        
-        if (!product_name || !product_category || !price || !owner) {
-            return res.status(400).json({ message: 'Semua field harus diisi' });
-        }
-
-        const ownerLower = owner.toLowerCase();
-        const users = usersController.getAllUsers({ query: {} }, { json: (data) => data });
-        const user = users.find(u => u.username === ownerLower);
-        
-        if (!user) {
-            return res.status(404).json({ message: 'Owner tidak ditemukan' });
-        }
-        
-        if (user.role !== 'seller') {
-            return res.status(403).json({ message: 'Hanya seller yang dapat membuat produk' });
-        }
-
-        const productSlug = product_name.toLowerCase().replace(/\s+/g, '-');
-        const exists = products.some(p => p.product_slug === productSlug);
-        
-        if (exists) {
-            return res.status(409).json({ message: 'Nama produk sudah digunakan' });
-        }
-
-        const newProduct = { 
-            product_name, 
-            product_slug: productSlug,
-            product_category, 
-            price: Number(price), 
-            owner: ownerLower 
-        };
-        products.push(newProduct);
-        res.status(201).json(newProduct);
+        const products = await productsService.getAllProducts();
+        res.json(products);
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+};
+
+exports.getProductById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const product = await productsService.getProductById(id);
+        res.json(product);
+    } catch (err) {
+        if (err.message === 'Product tidak ditemukan') {
+            res.status(404).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: err.message });
+        }
+    }
+};
+
+exports.getProductsBySeller = async (req, res) => {
+    const { sellerId } = req.params;
+    try {
+        const products = await productsService.getProductsBySellerId(sellerId);
+        res.json(products);
+    } catch (err) {
+        if (err.message === 'Seller tidak ditemukan') {
+            res.status(404).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: err.message });
+        }
+    }
+};
+
+exports.createProduct = async (req, res) => {
+    const { name, description, price, stock, category, imageUrl, sellerId } = req.body;
+    
+    if (!name || !price || !stock || !sellerId) {
+        return res.status(400).json({ message: 'Name, price, stock, dan sellerId harus diisi' });
+    }
+
+    try {
+        const newProduct = await productsService.createProduct({
+            name,
+            description,
+            price,
+            stock,
+            category,
+            imageUrl,
+            sellerId
+        });
+        res.status(201).json(newProduct);
+    } catch (err) {
+        if (err.message === 'Seller tidak ditemukan' || err.message === 'User bukan seller') {
+            res.status(404).json({ message: err.message });
+        } else if (err.message.includes('harus') || err.message.includes('tidak boleh')) {
+            res.status(400).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: err.message });
+        }
+    }
+};
+
+exports.updateProduct = async (req, res) => {
+    const { id } = req.params;
+    const { name, description, price, stock, category, imageUrl, sellerId } = req.body;
+
+    if (!name || !price || !stock || !sellerId) {
+        return res.status(400).json({ message: 'Name, price, stock, dan sellerId harus diisi' });
+    }
+
+    try {
+        const updatedProduct = await productsService.updateProduct(id, {
+            name,
+            description,
+            price,
+            stock,
+            category,
+            imageUrl,
+            sellerId
+        });
+        res.json(updatedProduct);
+    } catch (err) {
+        if (err.message === 'Product tidak ditemukan') {
+            res.status(404).json({ message: err.message });
+        } else if (err.message.includes('akses')) {
+            res.status(403).json({ message: err.message });
+        } else if (err.message.includes('harus') || err.message.includes('tidak boleh')) {
+            res.status(400).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: err.message });
+        }
+    }
+};
+
+exports.deleteProduct = async (req, res) => {
+    const { id } = req.params;
+    const { sellerId } = req.body;
+
+    if (!sellerId) {
+        return res.status(400).json({ message: 'SellerId harus diisi' });
+    }
+
+    try {
+        await productsService.deleteProduct(id, sellerId);
+        res.json({ message: 'Product berhasil dihapus' });
+    } catch (err) {
+        if (err.message === 'Product tidak ditemukan') {
+            res.status(404).json({ message: err.message });
+        } else if (err.message.includes('akses')) {
+            res.status(403).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: err.message });
+        }
     }
 };
 

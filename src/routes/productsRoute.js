@@ -1,16 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const productsController = require('../controllers/productsController');
-const authenticate = require('../middleware/authenticate'); // <-- Impor middleware
-const sellerOnly = require('../middleware/sellerOnly');     // <-- Impor middleware
 
-// Rute publik, bisa diakses siapa saja
+// GET all products
 router.get('/', productsController.getAllProducts);
+
+// GET products by seller (harus sebelum /:id agar tidak bentrok)
+router.get('/seller/:sellerId', productsController.getProductsBySeller);
+
+// GET product by ID
 router.get('/:id', productsController.getProductById);
 
-// Rute yang diproteksi, hanya untuk seller
-router.post('/', authenticate, sellerOnly, productsController.createProduct);
-router.put('/:id', authenticate, sellerOnly, productsController.updateProduct);
-router.delete('/:id', authenticate, sellerOnly, productsController.deleteProduct);
+// POST create new product
+router.post('/', productsController.createProduct);
+
+// PUT update product
+router.put('/:id', productsController.updateProduct);
+
+// DELETE product
+router.delete('/:id', productsController.deleteProduct);
+
+console.log('productsRoute.js loaded');
 
 module.exports = router;
+console.log('productsRoute.js exported');
