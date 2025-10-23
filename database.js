@@ -1,16 +1,16 @@
-require('dotenv').config();
-const { Sequelize } = require('sequelize');
-const path = require('path');
+require("dotenv").config();
+const { Sequelize } = require("sequelize");
+const path = require("path");
 
 // 1. Konfigurasi koneksi Sequelize menggunakan environment variables
 const sequelize = new Sequelize(
-    process.env.DB_NAME || 'postgresWAD',
-    process.env.DB_USER || 'postgres',
-    process.env.DB_PASSWORD || 'kataguaa',
-    {
-        host: process.env.DB_HOST || 'localhost',
-        dialect: process.env.DB_DIALECT || 'postgres'
-    }
+  process.env.DB_NAME || "postgresWAD",
+  process.env.DB_USER || "postgres",
+  process.env.DB_PASSWORD || "katasaya12",
+  {
+    host: process.env.DB_HOST || "localhost",
+    dialect: process.env.DB_DIALECT || "postgres",
+  }
 );
 
 const db = {};
@@ -20,18 +20,28 @@ db.Sequelize = Sequelize; // Menyimpan library Sequelize itu sendiri untuk menga
 db.sequelize = sequelize; // Menyimpan koneksi aktif ke database.
 
 // 3. Muat model User dan hubungkan dengan instance sequelize
-db.users = require(path.join(__dirname, 'src/models/user.js'))(sequelize, Sequelize);
-db.products = require(path.join(__dirname, 'src/models/product.js'))(sequelize, Sequelize);
+db.users = require(path.join(__dirname, "src/models/user.js"))(
+  sequelize,
+  Sequelize
+);
+db.products = require(path.join(__dirname, "src/models/product.js"))(
+  sequelize,
+  Sequelize
+);
+db.carts = require(path.join(__dirname, "src/models/cart.js"))(
+  sequelize,
+  Sequelize
+);
 
 // 4. Definisikan relasi antar model
 // User has many Products (as seller)
 db.users.hasMany(db.products, {
-    foreignKey: 'sellerId',
-    as: 'products'
+  foreignKey: "sellerId",
+  as: "products",
 });
 db.products.belongsTo(db.users, {
-    foreignKey: 'sellerId',
-    as: 'seller'
+  foreignKey: "sellerId",
+  as: "seller",
 });
 
 module.exports = db;

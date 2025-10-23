@@ -29,5 +29,8 @@
       "name": "SAYYID ABDUL AZIZ HAIDAR",
       "nim": "24120500005"
     }
-  ]
+  ],
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
